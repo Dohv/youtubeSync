@@ -1,0 +1,19 @@
+{
+  "name": "youtube_sync",
+  "version": "1.0.0",
+  "description": "watch youtube video together from different computers",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dohv/youtubeSync.git"
+  },
+  "author": "Dov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dohv/youtubeSync/issues"
+  },
+  "homepage": "https://github.com/Dohv/youtubeSync#readme"
+}

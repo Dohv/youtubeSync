@@ -2,8 +2,10 @@
   "name": "youtube_sync",
   "version": "1.0.0",
   "description": "watch youtube video together from different computers",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
+    "start": "node app.js",
+    "start:dev": "nodemon -e html,css,js app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +17,12 @@
   "bugs": {
     "url": "https://github.com/Dohv/youtubeSync/issues"
   },
-  "homepage": "https://github.com/Dohv/youtubeSync#readme"
+  "homepage": "https://github.com/Dohv/youtubeSync#readme",
+  "dependencies": {
+    "express": "^4.15.3",
+    "socket.io": "^2.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  }
 }

@@ -1,107 +1,100 @@
-const socket = io();
+const socket = io.connect('http://localhost:3000');
 
-// 2. This code loads the IFrame Player API code asynchronously.
-    var tag = document.createElement('script');
+  const tag = document.createElement('script');
 
     tag.src = "https://www.youtube.com/iframe_api";
-    var firstScriptTag = document.getElementsByTagName('script')[0];
+    const firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-    // 3. This function creates an <iframe> (and YouTube player)
+    // 3. This function creates an iframe> (and YouTube player)
     //    after the API code downloads.
-    var player;
+    let player;
 
     function onYouTubeIframeAPIReady() {
+      console.log('iframe loaded');
       player = new YT.Player('player', {
+        height: '390',
+        width: '640',
+        videoId: 'sGPrx9bjgC8',
         events: {
-          'onReady': bread,
-          //'onStateChange': onPlayerStateChange
+          'onReady': onPlayerReady,
+          'onStateChange': onPlayerStateChange, 
         }
       });
     }
 
     // 4. The API will call this function when the video player is ready.
-    function bread(event) {
-      // console.log(event.target);
-      console.log('player ready');
-      player.playVideo();
-      // let frame = document.querySelector('iframe');
-      // console.log(frame);
-      // let i = setTimeout((event) => {
-      //   event.target.stopVideo();
-      // }, 2000)
+    function onPlayerReady(e) {
+      console.log('video is ready to play');
+      socket.emit('ready');
+      //debugger;
+      // console.log('status code of video is' + YT.PlayerState.UNSTARTED);
+      // console.log('status code of video is' + YT.PlayerState.PLAYING);
+      // console.log('status code of video is' + YT.PlayerState.PAUSED);
+      // console.log('status code of video is' + YT.PlayerState.CUED);
+      // console.log('status code of video is' + YT.PlayerState.ENDED);
+      console.log(player.getPlayerState());
+
     }
 
 
-
-    // 5. The API calls this function when the player's state changes.
-    //    The function indicates that when playing a video (state=1),
-    //    the player should play for six seconds and then stop.
-    //function onPlayerStateChange(event) {
-      // console.log(event.data);
-      // if (event.data === YT.PlayerState.PAUSE || event.data === -1) {
-      //   console.log('pushed play');
-      //   document.querySelector('.play-video').addEventListener('click', function() {
-      //     console.log('play button works');
-      //     player.playVideo();
-      //   // when the play button is clicked, tell the server
-      //     socket.emit('pushed play');
-      //   });
-      // } else if (event.data === YT.PlayerState.PLAYING) {
-      //   console.log('pushed pause');
-      //   document.querySelector('.pause-video').addEventListener('click', function() {
-      //     console.log('pause button works');
-      //     player.pauseVideo();
-      //     socket.emit('pushed pause');
-      //   });
-      // }
-    //}
-
-    // socket.on('now playing')
-
-    // function stopVideo() {
-    //   player.stopVideo();
-    // }
-
-    // function playVideo() {
-    //   console.log('playing video function');
-    //   player.playVideo();
-    // }
-  
+    function onPlayerStateChange(e) {
+      console.log('printing state =>', e.data)
+      if (e.data === 3) {
+        console.log('video is buffereing');
+        socket.emit('status');
+      } else if (e.data === 5) {
+        console.log('video cued to specific time');
+      } else if (e.data === 0) {
+        console.log('video has ended');
+      } else if (e.data === 2) {
+        console.log('video is paused');
+        socket.emit('pause');
+      } else if (e.data === 1) {
+        socket.emit('play');
+        console.log('video is playing');
+      } else if (e.data === -1) {
+        console.log('video has not yet started');
+      }
 
 
+      socket.on('play', () => {
+        console.log('play from server recieved')
+        player.playVideo();
+      })
+
+      socket.on('pause', () => {
+        console.log('pause from server recieved')
+        //console.log(player.getCurrentTime());
+        //player.seekTo(0);
+        player.pauseVideo();
+        player.seekTo(0);
+      });
+
+        
+
+      // socket.on('sync', () => {
+      //   let currTime = player.getCurrentTime();
+      //   console.log(currTime);
+      //   //console.log('server recieved time');
+      //   player.seekTo(currTime);
+      // })
+
+      //thanks taka :-) for this code and all of your help
+       // this is the video loader with the input button
+      let btn = document.querySelector('.load');
+      btn.addEventListener('click', (event) => {
+        console.log(event.target);
+        let value = document.querySelector('input').value;
+        // now parse the URL so it only grabs the id
+        console.log(value.substr(value.indexOf('=')+1));
+        player.loadVideoById({
+          //not sure how substr works, i would use slice i think
+          'videoId': `${value.substr(value.indexOf('=')+1)}`,
+          'suggestedQuality': 'large'
+        });
+      })
 
 
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  // $('#play-video').on('click', function(ev) {
-  //   console.log(ev);
-  //   $("#video")[0].src += "&autoplay=1";
-  //   ev.preventDefault();
- 
-  // });
-
-
-// $('#change-bg').on('click', function() {
-//     // when the button is clicked, tell the server so
-//     socket.emit('change bg color');
-//   });
-
-//   // Whenever the server emits 'update bg color', update the damn thing
-//   socket.on('update bg color', function(data) {
-//     $('body').css('background-color', data.color);
-//   });

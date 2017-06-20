@@ -20,7 +20,9 @@
   "homepage": "https://github.com/Dohv/youtubeSync#readme",
   "dependencies": {
     "express": "^4.15.3",
-    "socket.io": "^2.0.3"
+    "simple-peer": "^8.1.0",
+    "socket.io": "^2.0.3",
+    "wrtc": "0.0.62"
   },
   "devDependencies": {
     "nodemon": "^1.11.0"
